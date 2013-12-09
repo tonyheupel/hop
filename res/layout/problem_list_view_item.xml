@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-    	<TextView
+	    <TextView
 		    style="@style/ProblemListViewItem"
 		    android:id="@+id/challengeTextView"
 		    android:layout_width="match_parent"
@@ -26,6 +26,15 @@
 		    android:paddingLeft="5dp" 
 		    android:paddingRight="5dp"
 		    android:paddingBottom="5dp"
+		    />        
+    	<TextView
+		    style="@style/ProblemListViewItem"
+		    android:id="@+id/solutionPathTextView"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingLeft="5dp" 
+		    android:paddingRight="5dp"
+		    android:paddingBottom="0dp"
 		    />
 		<TextView
 		    style="@style/SolutionListViewItem"

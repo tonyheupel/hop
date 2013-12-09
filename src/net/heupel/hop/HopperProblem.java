@@ -17,6 +17,10 @@ public class HopperProblem {
 		return join(this.challenge, ", ");
 	}
 	
+	public Object[] getSolution() {
+		return this.solution;
+	}
+	
 	public String getSolutionString() {
 		if (this.solution == null) {
 			return "";
