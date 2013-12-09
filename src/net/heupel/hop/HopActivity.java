@@ -1,77 +1,56 @@
 package net.heupel.hop;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.Toast;
 
-public class HopActivity extends Activity
-{
-    /** Called when the activity is first created. */
+public class HopActivity 
+					extends Activity
+					implements OnItemClickListener {
+	
+	private HopperProblem[] problems;
+	private HopperProblemsAdapter problemsAdapter;
+	private ListView resultsListView;
+	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        int[][] problems = new int[][] {
-        		{ 5, 6, 0, 4, 2, 4, 1, 0, 0, 4 },	// 0, 5, 9, out
-        		{ 5, 6, 0, 4, 2, 1, 1, 0, 0, 4 },	// failure
-        		{ 3, 20, 1, 1, 1, 1, 1 },			// 0, 1, out
-        		{ 5, 2, 4, 2, 2, 0, 3, 0, 0, 4 }	// 0, 4, 6, 9, out (backtrack)
+        this.problems = new HopperProblem[] {
+        		new HopperProblem(new int[] { 5, 6, 0, 4, 2, 4, 1, 0, 0, 4 }),	// 0, 5, 9, out
+        		new HopperProblem(new int[] { 5, 6, 0, 4, 2, 1, 1, 0, 0, 4 }),	// failure
+        		new HopperProblem(new int[] { 3, 20, 1, 1, 1, 1, 1 }),			// 0, 1, out
+        		new HopperProblem(new int[] { 5, 2, 4, 2, 2, 0, 3, 0, 0, 4 })	// 0, 4, 6, 9, out (backtrack)
         };
-
-        ArrayList<String> results = new ArrayList<String>();
-        for (int[] problem : problems) {
-        	results.add(join(problem, ", ") + "\n\t" + calculatePathOut(problem));	
-        }
-        
-		setResults(join(results.toArray(), "\n"));
+		
+		this.problemsAdapter = new HopperProblemsAdapter(this, R.layout.problem_list_view_item, this.problems);
+		this.resultsListView = getResultsListView();
+		this.resultsListView.setOnItemClickListener(this);
+		this.resultsListView.setAdapter(this.problemsAdapter);
     }
 
     
-	private void setResults(String value) {
-		TextView resultsView = getResultsView();
-		resultsView.setText(value);
+	private ListView getResultsListView() {
+		return (ListView)findViewById(R.id.resultsList);
 	}
 
-	
-	private TextView getResultsView() {
-		return (TextView)findViewById(R.id.results);
-	}
 
-	
-    private String calculatePathOut(int[] array) {
-    	ArrayHopper hopper = new ArrayHopper(array);
-    	
-    	Object[] result = hopper.shortestPathOut();
-    	
-    	if (result == ArrayHopper.FAILURE_ROUTE) {
-    		return "failure";
-    	}
-    	
-    	return join(result, ", ");
-    }
-    
-    private static String join(int[] array, String separator) {
-    	Object[] objects = new Object[array.length];
-    	for (int i=0; i < array.length; i++) {
-    		objects[i] = array[i];
-    	}
-    	
-    	return join(objects, separator);
-    }
-	
-	private static String join(Object[] array, String separator) {
-	    StringBuilder builder = new StringBuilder();
-	    
-	    for (int i = 0; i < array.length; i++) {
-	        if (i > 0) builder.append(separator);
-	        
-	        builder.append(array[i]);
-	    }
-	    
-	    return builder.toString();
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		HopperProblem item = this.problemsAdapter.getItem(position);
+		
+		if (item.isSolved()) {
+			item.clearSolution();
+		} else { 
+			item.solve();
+		}
+		
+		this.problemsAdapter.notifyDataSetChanged();
 	}
 }
