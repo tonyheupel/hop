@@ -3,7 +3,7 @@ package net.heupel.hop;
 public class HopperProblem {
 	final private String FAILED_SOLUTION = "failure";
 	private int[] challenge;
-	private String solution;
+	private Object[] solution;
 	
 	public HopperProblem(int[] challenge) {
 		this.challenge = challenge;
@@ -18,7 +18,15 @@ public class HopperProblem {
 	}
 	
 	public String getSolutionString() {
-		return this.solution;
+		if (this.solution == null) {
+			return "";
+		}
+		
+		if (this.solution.length == 0) {
+			return FAILED_SOLUTION;
+		}
+		
+		return join(this.solution, ", ");
 	}
 	
 	public Boolean isSolved() {
@@ -26,20 +34,16 @@ public class HopperProblem {
 	}
 	
 	public Boolean isFailed() {
-		return this.solution == FAILED_SOLUTION;
+		return this.getSolutionString() == FAILED_SOLUTION;
 	}
 	
 	public String solve() {
 		ArrayHopper hopper = new ArrayHopper(this.challenge);
 		Object[] route = hopper.shortestPathOut();
+
+		this.solution = route;
     	
-    	if (route == ArrayHopper.FAILURE_ROUTE) {
-    		this.solution = FAILED_SOLUTION;
-    	} else {
-    		this.solution = join(route, ", ");
-    	}
-    	
-    	return this.solution;
+    	return getSolutionString();
 	}
 	
 	public void clearSolution() {
@@ -48,7 +52,7 @@ public class HopperProblem {
 	
 	@Override
 	public String toString() {
-		return getChallengeString() + "\n\t" + (isSolved() ? this.solution : "not solved yet");
+		return getChallengeString() + "\n\t" + (isSolved() ? getSolutionString() : "not solved yet");
 	}
 	
 	
